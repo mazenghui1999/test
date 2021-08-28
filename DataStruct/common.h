@@ -8,6 +8,7 @@
 #include <assert.h>
 #include <string.h>
 #include <vld.h>
+#include <stdbool.h>
 
 #define ElemType  int 
 

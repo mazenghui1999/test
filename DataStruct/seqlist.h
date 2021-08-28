@@ -4,6 +4,7 @@
 #include "common.h"
 
 #define ElemType  int 
+#define INC   3
 
 typedef struct Seqlist
 {
@@ -13,6 +14,10 @@ typedef struct Seqlist
 }Seqlist;
 
 //函数声明
+bool _Inc(Seqlist *pst);
+bool _IsFull(Seqlist *pst);
+bool _IsEmpty(Seqlist *pst);
+///////
 void SeqlistInit(Seqlist* pst,size_t space);
 void SeqlistPushBack(Seqlist *pst, ElemType v);
 void SeqlistShow(Seqlist *pst);
@@ -27,6 +32,24 @@ void SeqlistSort(Seqlist *pst);
 
 
 //函数实现
+bool _Inc(Seqlist *pst)
+{
+	pst->base = (ElemType*)realloc(pst->base,sizeof(ElemType)*(pst->capacity + INC));
+	if (pst->base == NULL)
+		return false;
+	pst->capacity += INC;
+	return true;
+
+}
+bool _IsFull(Seqlist *pst)
+{
+	return pst->size >= pst->capacity;
+}
+bool _IsEmpty(Seqlist *pst)
+{
+	return pst->size == 0;
+}
+
 void SeqlistInit(Seqlist* pst,size_t space)//初始化
 {
 	assert(pst->base != 0);
@@ -41,14 +64,14 @@ void SeqlistPushBack(Seqlist *pst, ElemType v)
 {
 	assert(pst->base != NULL);
 	//检查容量 
-	if (pst->size < pst->capacity)
-	{
-		pst->base[pst->size++] = v;
-	}
-	else
+	if (_IsFull(pst)&&!_Inc(pst))
 	{
 		printf("顺序表容量空间不足\n");
 		return;
+	}
+	else
+	{
+		pst->base[pst->size++] = v;
 	}
 }
 void SeqlistShow(Seqlist *pst)
@@ -135,15 +158,19 @@ void SeqlistReverse(Seqlist *pst)
 void SeqlistSort(Seqlist *pst)
 //冒泡排序  重新温习
 {
-	for (int i = 0; i < pst->size - 1; ++i)
+	for (size_t i = 0; i < pst->size - 1; ++i)
 	{
-		for (int j = 0; j < pst->size - i - 1; ++j)
+		bool is_swap = false;
+		for (size_t j = 0; j < pst->size - i - 1; ++j)
 		{
 			if (pst->base[j]>pst->base[j + 1])
 			{
 				swap(&(pst->base[j]), &(pst->base[j + 1]));
+				is_swap = true;
 			}
 		}
+		if (!is_swap)
+			break;
 	}
 }
 
